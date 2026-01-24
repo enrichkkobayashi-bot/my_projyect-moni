@@ -1,0 +1,7 @@
+{
+  "name": "モニタリング",
+  "description": "ケアマネージャーのモニタリング音声ファイルから、専門的なモニタリング記録を自動生成するアプリケーションです。",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
