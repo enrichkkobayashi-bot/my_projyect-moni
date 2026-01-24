@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
-    const [activeUrl, setActiveUrl] = useState<string>('');
+    const location = useLocation();
 
     const menuItems = [
-        { name: 'モニタリング', url: import.meta.env.VITE_APP_MONITORING_URL },
-        { name: '担当者会議', url: import.meta.env.VITE_APP_MEETING_URL },
-        { name: '要介護プラン', url: import.meta.env.VITE_APP_CARE_PLAN_URL },
-        { name: '要支援プラン', url: import.meta.env.VITE_APP_SUPPORT_PLAN_URL },
-        { name: '入院時情報連携', url: import.meta.env.VITE_APP_ADMISSION_SHEET_URL },
+        { name: 'モニタリング', path: 'https://enrichkkobayashi-bot.github.io/my_projyect-moni/' },
+        { name: '担当者会議', path: 'http://my-project-kaigi.vercel.app/' },
+        { name: '要介護プラン', path: 'https://enrichkkobayashi-bot.github.io/kaigo-plan-system/' },
+        { name: '要支援プラン', path: 'https://care-plan-assistant.vercel.app' },
+        { name: '入院時情報連携', path: 'https://carelink-ai-sheet.vercel.app' },
     ];
-
-    useEffect(() => {
-        // 現在のオリジンと一致するURLを探してアクティブ状態にする
-        const currentOrigin = window.location.origin;
-        setActiveUrl(currentOrigin);
-    }, []);
 
     return (
         <aside className="fixed top-0 left-0 w-64 h-full bg-[#0F172A] text-white flex flex-col no-print z-50 overflow-y-auto">
@@ -36,22 +31,48 @@ const Sidebar: React.FC = () => {
                 </div>
                 <nav className="space-y-2">
                     {menuItems.map((item, index) => {
-                        // URLが現在のオリジンと部分一致するか、あるいは単純な比較
-                        // ここではポート番号レベルでの違いなので、startsWithで判定
-                        const isActive = item.url && item.url !== '#' && activeUrl.startsWith(item.url);
+                        const isExternal = item.path.startsWith('http');
+                        const isActive = !isExternal && location.pathname === item.path;
 
-                        return (
-                            <a
-                                key={index}
-                                href={item.url}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-                                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                                    }`}
-                            >
+                        const className = `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
+                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
+                            : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                            }`;
+
+                        const content = (
+                            <>
                                 <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-gray-600 group-hover:bg-gray-400'}`}></span>
                                 <span className="font-medium text-sm">{item.name}</span>
-                            </a>
+                                {isExternal && (
+                                    <svg className="w-4 h-4 ml-auto opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                )}
+                            </>
+                        );
+
+                        if (isExternal) {
+                            return (
+                                <a
+                                    key={index}
+                                    href={item.path}
+                                    className={className}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {content}
+                                </a>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={index}
+                                to={item.path}
+                                className={className}
+                            >
+                                {content}
+                            </Link>
                         );
                     })}
                 </nav>
