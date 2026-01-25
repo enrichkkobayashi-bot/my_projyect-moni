@@ -1,5 +1,14 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '4.5mb', // Vercel Hobbyプランの上限
+        },
+    },
+};
+
+
 // 定数定義 (geminiService.tsより移植)
 const MONITORING_SYSTEM_INSTRUCTION = `あなたは実務経験20年以上の熟練した主任ケアマネジャーです。
 提供された情報に基づき、介護保険制度の「支援経過記録（モニタリング）」を作成してください。
@@ -149,7 +158,7 @@ JSON形式で出力してください。`
                     }
                 }
             });
-            const result = JSON.parse(response.text() || "{}");
+            const result = JSON.parse(response.text || "{}");
             if (result.summaryText) {
                 result.summaryText = result.summaryText
                     .replace(/([１-４][．.] )/g, '\n\n$1')
@@ -169,7 +178,7 @@ JSON形式で出力してください。`
                     responseMimeType: "application/json",
                 }
             });
-            return res.status(200).json(JSON.parse(response.text() || "{}"));
+            return res.status(200).json(JSON.parse(response.text || "{}"));
 
         } else if (action === 'generateSupportChecklist') {
             const { files } = payload;
@@ -194,7 +203,7 @@ JSON形式で出力してください。`
                     }
                 }
             });
-            return res.status(200).json(JSON.parse(response.text() || "[]"));
+            return res.status(200).json(JSON.parse(response.text || "[]"));
 
         } else if (action === 'generateCarePlanFromAssessment') {
             const { assessment } = payload;
@@ -208,7 +217,7 @@ JSON形式で出力してください。`
                     responseMimeType: "application/json",
                 }
             });
-            return res.status(200).json(JSON.parse(response.text() || "{}"));
+            return res.status(200).json(JSON.parse(response.text || "{}"));
 
         } else if (action === 'generatePreventivePlan') {
             const { assessment } = payload;
@@ -222,7 +231,7 @@ JSON形式で出力してください。`
                     responseMimeType: "application/json",
                 }
             });
-            return res.status(200).json(JSON.parse(response.text() || "{}"));
+            return res.status(200).json(JSON.parse(response.text || "{}"));
 
         } else if (action === 'generateConversationSummary') {
             const { files } = payload;
@@ -254,7 +263,7 @@ JSON形式で出力してください。`
                     }
                 }
             });
-            return res.status(200).json(JSON.parse(response.text() || "{}"));
+            return res.status(200).json(JSON.parse(response.text || "{}"));
         }
 
         return res.status(400).json({ error: 'Invalid action' });

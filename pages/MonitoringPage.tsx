@@ -119,9 +119,9 @@ export const MonitoringPage: React.FC = () => {
                 setStatus(AppStatus.COMPLETED);
                 scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
             }, 800);
-        } catch (err) {
+        } catch (err: any) {
             console.error("Analysis Error:", err);
-            setError("解析中にエラーが発生しました。");
+            setError(err.message || "解析中にエラーが発生しました。");
             setStatus(AppStatus.ERROR);
         }
     };

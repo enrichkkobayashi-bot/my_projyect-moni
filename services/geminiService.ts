@@ -13,22 +13,24 @@ async function callApi(action: string, payload: any) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `API request failed with status ${response.status}`);
+      let errorMessage = `API Error: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.error) {
+          errorMessage += ` - ${errorData.error}`;
+          if (errorData.details) errorMessage += ` (${JSON.stringify(errorData.details)})`;
+        }
+      } catch (e) {
+        // JSONパースエラー時はHTMLレスポンスかもしれないので無視してステータスのみ
+      }
+      throw new Error(errorMessage);
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error inside ${action}:`, error);
-    // エラー時は空オブジェクト等を返すか、エラーを投げるか。元の実装は空オブジェクトを返す傾向があったが、
-    // ここでは呼び出し元でハンドリングできるようにエラーをログに出しつつ、
-    // 元の挙動に合わせて空オブジェクトを返すフォールバックも考慮するが、
-    // エラーが起きたことがわかるように例外をスローさせるほうがデバッグしやすい。
-    // ただし既存UIがエラーハンドリングしていないとクラッシュする。
-    // 元のコードを見ると、try-catchで囲んで空オブジェクトを返す実装が多かった。
-    // ここでもそれに倣い、空またはそれっぽい値を返すか、あるいは呼び出し側でエラー処理を追加するか。
-    // 安全のため空オブジェクトを返す形にする（元のcatchブロックの挙動を模倣）。
-    return {};
+    // 呼び出し元でキャッチして表示させるために再スローする
+    throw error;
   }
 }
 
