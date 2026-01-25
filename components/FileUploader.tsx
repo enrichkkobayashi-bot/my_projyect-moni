@@ -10,17 +10,23 @@ interface FileUploaderProps {
   status: AppStatus;
 }
 
-export const FileUploader: React.FC<FileUploaderProps> = ({ 
-  onFileAdd, 
-  onStartAnalysis, 
-  pendingFiles, 
+export const FileUploader: React.FC<FileUploaderProps> = ({
+  onFileAdd,
+  onStartAnalysis,
+  pendingFiles,
   onRemoveFile,
-  status 
+  status
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (file: File) => {
+    // 4MB制限 (base64エンコード増加分を考慮して少し余裕を持たせる)
+    if (file.size > 4 * 1024 * 1024) {
+      alert(`${file.name} はサイズが大きすぎます。4MB以下のファイルを選択してください。`);
+      return;
+    }
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -59,33 +65,32 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     <div className="space-y-6">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <h2 className="text-lg font-semibold text-slate-700 mb-4 text-center">データの取り込み（複数可）</h2>
-        
-        <div 
-          className={`relative border-2 border-dashed rounded-xl p-8 transition-all flex flex-col items-center gap-3 cursor-pointer ${
-            dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'
-          }`}
+
+        <div
+          className={`relative border-2 border-dashed rounded-xl p-8 transition-all flex flex-col items-center gap-3 cursor-pointer ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'
+            }`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
         >
-          <input 
+          <input
             ref={inputRef}
-            type="file" 
+            type="file"
             multiple
-            accept="audio/*,application/pdf,text/plain" 
-            className="hidden" 
+            accept="audio/*,application/pdf,text/plain"
+            className="hidden"
             onChange={handleChange}
             disabled={status === AppStatus.PROCESSING}
           />
-          
+
           <div className="bg-indigo-100 p-3 rounded-full text-indigo-600">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
             </svg>
           </div>
-          
+
           <div className="text-center">
             <p className="text-slate-700 font-medium text-sm">ファイルを追加</p>
             <p className="text-slate-400 text-xs mt-1">音声, PDF, テキストに対応</p>
@@ -108,7 +113,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                     </div>
                     <span className="text-xs font-medium text-slate-600 truncate">{file.name}</span>
                   </div>
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); onRemoveFile(idx); }}
                     className="p-1 text-slate-300 hover:text-red-500 transition-colors"
                   >
@@ -131,7 +136,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
           </div>
         )}
       </div>
-      
+
       <p className="text-[10px] text-slate-400 text-center leading-relaxed">
         ※音声だけでなくPDF等の補助資料も一緒に読み込ませることで、<br />
         より正確なアセスメント結果が得られます。
