@@ -5,9 +5,9 @@ const Sidebar: React.FC = () => {
     const location = useLocation();
 
     const menuItems = [
-        { name: 'モニタリング', path: 'https://enrichkkobayashi-bot.github.io/my_projyect-moni/' },
-        { name: '担当者会議', path: 'https://my-project-kaigi.vercel.app/' },
-        { name: '要介護プラン', path: 'https://enrichkkobayashi-bot.github.io/kaigo-plan-system/' },
+        { name: 'モニタリング', path: 'https://my-project-moni.vercel.app' },
+        { name: '担当者会議録', path: 'https://my-project-kaigi.vercel.app/' },
+        { name: '要介護プラン', path: 'https://kaigo-plan-system.vercel.app' },
         { name: '要支援プラン', path: 'https://care-plan-assistant.vercel.app' },
         { name: '入院時情報連携', path: 'https://carelink-ai-sheet.vercel.app' },
     ];
