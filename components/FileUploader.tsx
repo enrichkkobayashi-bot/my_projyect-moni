@@ -21,9 +21,9 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (file: File) => {
-    // 4MB制限 (base64エンコード増加分を考慮して少し余裕を持たせる)
-    if (file.size > 4 * 1024 * 1024) {
-      alert(`${file.name} はサイズが大きすぎます。4MB以下のファイルを選択してください。`);
+    // 50MB制限 (base64エンコード増加分を考慮して少し余裕を持たせる)
+    if (file.size > 50 * 1024 * 1024) {
+      alert(`${file.name} はサイズが大きすぎます。50MB以下のファイルを選択してください。`);
       return;
     }
 

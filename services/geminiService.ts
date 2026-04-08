@@ -14,7 +14,7 @@ async function callApi(action: string, payload: any) {
 
     if (!response.ok) {
       if (response.status === 413) {
-        throw new Error("ファイルサイズが大きすぎます。合計約4MB以下のファイルを使用してください。");
+        throw new Error("ファイルサイズが大きすぎます。合計約50MB以下のファイルを使用してください。");
       }
 
       let errorMessage = `API Error: ${response.status} ${response.statusText}`;
