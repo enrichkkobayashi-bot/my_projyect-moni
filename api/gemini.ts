@@ -35,11 +35,12 @@ export default async function handler(req, res) {
 
             const result = await ai.models.generateContent({
                 model: usedModel,
-                contents: { parts },
+                contents: [{ parts }],
                 config: { responseMimeType: "application/json" }
             });
 
-            return res.status(200).json(JSON.parse(result.text || "{}"));
+            const text = result.response.text();
+            return res.status(200).json(JSON.parse(text || "{}"));
 
         } else if (action === 'generateConversationSummary') {
             const { files } = payload;
@@ -48,11 +49,12 @@ export default async function handler(req, res) {
 
             const result = await ai.models.generateContent({
                 model: usedModel,
-                contents: { parts },
+                contents: [{ parts }],
                 config: { responseMimeType: "application/json" }
             });
 
-            return res.status(200).json(JSON.parse(result.text || "{}"));
+            const text = result.response.text();
+            return res.status(200).json(JSON.parse(text || "{}"));
         }
 
         return res.status(400).json({ error: 'Invalid action' });
